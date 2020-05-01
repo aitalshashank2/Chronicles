@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from datetime import datetime
 
 
 class ChronicleUser(AbstractUser):
@@ -15,7 +16,7 @@ class Project(models.Model):
     description = models.CharField(max_length=1000)
     creator = models.ForeignKey(ChronicleUser, null=True, on_delete=models.SET_NULL, related_name='created_projects')
     team = models.ManyToManyField(ChronicleUser, related_name='projects')
-    creation = models.DateTimeField('Timestamp of project creation')
+    creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of project creation')
 
     def __str__(self):
         return self.name
@@ -28,7 +29,7 @@ class BugReport(models.Model):
     description = models.CharField(max_length=2000)
     person_in_charge = models.ForeignKey(ChronicleUser, null=True, on_delete=models.SET_NULL,
                                          related_name='bugs_assigned')
-    creation = models.DateTimeField('Timestamp of bug report')
+    creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of bug report')
     status = models.BooleanField(default=False)
 
     class Meta:
@@ -40,7 +41,7 @@ class BugReport(models.Model):
 
 class Comment(models.Model):
     report = models.ForeignKey(BugReport, on_delete=models.CASCADE)
-    creation = models.DateTimeField('Timestamp of comment')
+    creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of comment')
     commenter = models.ForeignKey(ChronicleUser, null=True, on_delete=models.SET_NULL)
     body = models.CharField(max_length=1000)
 
