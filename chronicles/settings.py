@@ -56,8 +56,7 @@ ROOT_URLCONF = 'chronicles.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,7 +82,7 @@ DATABASES = {
         'PORT': '3306',
         'NAME': 'Chronicles',
         'USER': 'root',
-        'PASSWORD': 'SHAshu4321#@mysql',
+        'PASSWORD': 'Pass123#',
         'OPTIONS': {'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"'},
     }
 }

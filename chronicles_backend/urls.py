@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from chronicles_backend.views import *
+from django.conf.urls import include
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -13,4 +14,8 @@ urlpatterns = [
     path('projects/<int:pk>/team/', MembersOfProject.as_view()),
     path('projects/<int:pk>/bugReports/', BugsOfProject.as_view()),
     path('bugReports/<int:pk>/comments', CommentsOnBugs.as_view()),
+]
+
+urlpatterns += [
+    path('api-auth/', include('rest_framework.urls')),
 ]

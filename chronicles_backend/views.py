@@ -1,9 +1,8 @@
-from django.shortcuts import render
 from rest_framework import viewsets
-from .models import *
-from .serializers import *
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from .permissions import *
+from .serializers import *
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -14,16 +13,38 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    permission_classes = [permissions.IsAuthenticated, IsProjectCreatorOrAdmin]
+
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
 
 
 class BugReportViewSet(viewsets.ModelViewSet):
     queryset = BugReport.objects.all()
-    serializer_class = BugReportSerializer
+    permission_classes = [permissions.IsAuthenticated, IsTeamMemberOrAdmin]
+
+    def perform_create(self, serializer):
+        serializer.save(reporter=self.request.user)
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return BugReportSerializer
+        else:
+            return BugReportEditSerializer
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated, IsCommenter]
+
+    def perform_create(self, serializer):
+        serializer.save(commenter=self.request.user)
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CommentSerializer
+        else:
+            return CommentEditSerializer
 
 
 class MembersOfProject(APIView):
