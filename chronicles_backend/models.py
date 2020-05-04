@@ -31,6 +31,7 @@ class BugReport(models.Model):
                                          related_name='bugs_assigned')
     creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of bug report')
     status = models.BooleanField(default=False)
+    tagsHash = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['-status', '-creation']

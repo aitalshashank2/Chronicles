@@ -32,6 +32,30 @@ class BugReportViewSet(viewsets.ModelViewSet):
         else:
             return BugReportEditSerializer
 
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        if ChronicleUser.objects.get(pk=request.data['person_in_charge']) in self.get_object().project.team.all():
+            return self.update(request, *args, **kwargs)
+        else:
+            content = {
+                'status': 'Not a team member'
+            }
+            return Response(content)
+
+    def update(self, request, *args, **kwargs):
+        if ChronicleUser.objects.get(pk=request.data['person_in_charge']) in self.get_object().project.team.all():
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(serializer.data)
+        else:
+            content = {
+                'status': 'Not a team member'
+            }
+            return Response(content)
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
