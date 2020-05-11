@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class ChronicleUser(AbstractUser):
-
+    enrNo = models.IntegerField(default=0)
     isAdmin = models.BooleanField(default=False)
 
     def __str__(self):

@@ -1,4 +1,9 @@
+import json
+import requests
+from django.contrib.auth import login
+from django.http import HttpResponse
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .permissions import *
@@ -8,6 +13,53 @@ from .serializers import *
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ChronicleUser.objects.all()
     serializer_class = UserSerializer
+
+    @action(methods=['GET'], detail=False, url_name='curr', url_path='curr')
+    def curr_user(self, request):
+        print(request.session)
+        return HttpResponse(request.user)
+
+    @action(methods=['POST', 'OPTIONS'], detail=False, url_name='token', url_path='token')
+    def token_parser(self, request):
+        data = json.loads(request.body.decode('utf-8'))
+        auth_code = data['code']
+        payload = {
+            'client_id': 'nUeXTqAt8eJEwfmgZ9vIRSTyexUldebZO8Ht43H0',
+            'client_secret': 'xxx',
+            'grant_type': 'authorization_code',
+            'redirect_url': 'http://localhost:3000',
+            'code': auth_code,
+        }
+        response = requests.post('https://internet.channeli.in/open_auth/token/', data=payload)
+        resdict = json.loads(response.text)
+        access_token = resdict['access_token']
+
+        response2 = requests.get("https://internet.channeli.in/open_auth/get_user_data/",
+                                 headers={'Authorization': f'Bearer {access_token}'})
+        resdict2 = json.loads(response2.text)
+
+        # Login
+        roles = resdict2['person']['roles']
+        maintainer = False
+        for i in roles:
+            if i['role'] == 'Maintainer':
+                maintainer = True
+        if maintainer:
+            try:
+                user = ChronicleUser.objects.get(enrNo=resdict2['student']['enrolmentNumber'])
+                login(user=user, request=request)
+                print("success")
+            except ChronicleUser.DoesNotExist:
+                user = ChronicleUser(
+                    username=resdict2['person']['fullName'],
+                    enrNo=resdict2['student']['enrolmentNumber'],
+                    email=resdict2['contactInformation']['instituteWebmailAddress']
+                )
+                user.save()
+                login(user=user, request=request)
+
+        print(request.session)
+        return HttpResponse("Accepted")
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
