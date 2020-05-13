@@ -14,15 +14,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ChronicleUser.objects.all()
     serializer_class = UserSerializer
 
-    @action(methods=['GET'], detail=False, url_name='curr', url_path='curr')
-    def curr_user(self, request):
-        print(request.session)
-        return HttpResponse(request.user)
-
     @action(methods=['POST', 'OPTIONS'], detail=False, url_name='token', url_path='token')
     def token_parser(self, request):
         data = json.loads(request.body.decode('utf-8'))
-        auth_code = data['code']
+        try:
+            auth_code = data['code']
+        except:
+            return HttpResponse('Failed')
         payload = {
             'client_id': 'nUeXTqAt8eJEwfmgZ9vIRSTyexUldebZO8Ht43H0',
             'client_secret': 'xxx',
@@ -47,8 +45,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         if maintainer:
             try:
                 user = ChronicleUser.objects.get(enrNo=resdict2['student']['enrolmentNumber'])
-                login(user=user, request=request)
-                print("success")
+                login(request=request, user=user)
             except ChronicleUser.DoesNotExist:
                 user = ChronicleUser(
                     username=resdict2['person']['fullName'],
@@ -56,9 +53,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
                     email=resdict2['contactInformation']['instituteWebmailAddress']
                 )
                 user.save()
-                login(user=user, request=request)
-
-        print(request.session)
+                login(request=request, user=user)
         return HttpResponse("Accepted")
 
 

@@ -13,9 +13,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('projects/<int:pk>/team/', MembersOfProject.as_view()),
     path('projects/<int:pk>/bugReports/', BugsOfProject.as_view()),
-    path('bugReports/<int:pk>/comments', CommentsOnBugs.as_view()),
+    path('bugReports/<int:pk>/comments/', CommentsOnBugs.as_view()),
 ]
 
-urlpatterns += [
-    path('api-auth/', include('rest_framework.urls')),
-]
