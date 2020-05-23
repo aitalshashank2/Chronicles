@@ -1,7 +1,7 @@
 import json
 import requests
 from django.contrib.auth import login
-from django.http import HttpResponse
+from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -14,13 +14,20 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ChronicleUser.objects.all()
     serializer_class = UserSerializer
 
+    @action(methods=['GET'], detail=False, url_path='curr', url_name='curr')
+    def curr_user(self, request):
+        if request.user.is_authenticated:
+            return JsonResponse({'user': request.user.username})
+        else:
+            return HttpResponseForbidden()
+
     @action(methods=['POST', 'OPTIONS'], detail=False, url_name='token', url_path='token')
     def token_parser(self, request):
-        data = json.loads(request.body.decode('utf-8'))
         try:
+            data = json.loads(request.body.decode('utf-8'))
             auth_code = data['code']
         except:
-            return HttpResponse('Failed')
+            return HttpResponseBadRequest()
         payload = {
             'client_id': 'nUeXTqAt8eJEwfmgZ9vIRSTyexUldebZO8Ht43H0',
             'client_secret': 'xxx',
@@ -54,7 +61,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
                 )
                 user.save()
                 login(request=request, user=user)
-        return HttpResponse("Accepted")
+        return JsonResponse({'user': user.username})
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
