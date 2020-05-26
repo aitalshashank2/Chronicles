@@ -17,6 +17,7 @@ class Project(models.Model):
     creator = models.ForeignKey(ChronicleUser, null=True, on_delete=models.SET_NULL, related_name='created_projects')
     team = models.ManyToManyField(ChronicleUser, related_name='projects')
     creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of project creation')
+    image = models.ImageField(upload_to='projectImages/', default='projectImages/default.png')
 
     def __str__(self):
         return self.name
@@ -32,6 +33,7 @@ class BugReport(models.Model):
     creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of bug report')
     status = models.BooleanField(default=False)
     tagsHash = models.IntegerField(default=0)
+    image = models.ImageField(upload_to='bugReportImages/')
 
     class Meta:
         ordering = ['-status', '-creation']
@@ -45,6 +47,7 @@ class Comment(models.Model):
     creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of comment')
     commenter = models.ForeignKey(ChronicleUser, null=True, on_delete=models.SET_NULL)
     body = models.CharField(max_length=1000)
+    image = models.ImageField(upload_to='commentImages/')
 
     class Meta:
         ordering = ['-creation']

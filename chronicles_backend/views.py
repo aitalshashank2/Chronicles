@@ -1,6 +1,6 @@
 import json
 import requests
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -18,6 +18,14 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     def curr_user(self, request):
         if request.user.is_authenticated:
             return JsonResponse({'user': request.user.username})
+        else:
+            return HttpResponseForbidden()
+
+    @action(methods=['GET'], detail=False, url_path='logout', url_name='logout')
+    def logoutCU(self, request):
+        if request.user.is_authenticated:
+            logout(request)
+            return JsonResponse({'status': 'Logged out'})
         else:
             return HttpResponseForbidden()
 
