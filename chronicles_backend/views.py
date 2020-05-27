@@ -75,6 +75,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    lookup_field = 'slug'
     permission_classes = [permissions.IsAuthenticated, IsProjectCreatorOrAdmin]
 
     def perform_create(self, serializer):

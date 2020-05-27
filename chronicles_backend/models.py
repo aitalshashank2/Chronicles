@@ -18,6 +18,7 @@ class Project(models.Model):
     team = models.ManyToManyField(ChronicleUser, related_name='projects')
     creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of project creation')
     image = models.ImageField(upload_to='projectImages/', default='projectImages/default.png')
+    slug = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name

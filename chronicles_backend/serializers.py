@@ -11,8 +11,12 @@ class UserSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ['id', 'name', 'description', 'creator', 'team', 'creation', 'image']
+        fields = ['id', 'name', 'description', 'creator', 'team', 'creation', 'image', 'slug']
         read_only_fields = ['creator', 'creation']
+        lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }
 
 
 class BugReportSerializer(serializers.ModelSerializer):
