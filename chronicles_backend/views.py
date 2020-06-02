@@ -136,15 +136,15 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 class MembersOfProject(APIView):
 
-    def get(self, request, pk, format=None):
-        serializer = UserSerializer(Project.objects.get(pk=pk).team.all(), many=True)
+    def get(self, request, slug, format=None):
+        serializer = UserSerializer(Project.objects.get(slug=slug).team.all(), many=True)
         return Response(serializer.data)
 
 
 class BugsOfProject(APIView):
 
-    def get(self, request, pk, format=None):
-        serializer = BugReportSerializer(Project.objects.get(pk=pk).bugreport_set.all(), many=True)
+    def get(self, request, slug, format=None):
+        serializer = BugReportSerializer(Project.objects.get(slug=slug).bugreport_set.all(), many=True)
         return Response(serializer.data)
 
 

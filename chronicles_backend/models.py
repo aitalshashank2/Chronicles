@@ -34,10 +34,10 @@ class BugReport(models.Model):
     creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of bug report')
     status = models.BooleanField(default=False)
     tagsHash = models.IntegerField(default=0)
-    image = models.ImageField(upload_to='bugReportImages/')
+    image = models.ImageField(upload_to='bugReportImages/', null=True)
 
     class Meta:
-        ordering = ['-status', '-creation']
+        ordering = ['status', 'creation']
 
     def __str__(self):
         return f"{self.project}::{self.heading}"
@@ -48,7 +48,7 @@ class Comment(models.Model):
     creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of comment')
     commenter = models.ForeignKey(ChronicleUser, null=True, on_delete=models.SET_NULL)
     body = models.CharField(max_length=1000)
-    image = models.ImageField(upload_to='commentImages/')
+    image = models.ImageField(upload_to='commentImages/', null=True)
 
     class Meta:
         ordering = ['-creation']

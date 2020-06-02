@@ -28,6 +28,9 @@ class BugReportSerializer(serializers.ModelSerializer):
 
 
 class BugReportEditSerializer(serializers.ModelSerializer):
+    reporter = UserSerializer()
+    person_in_charge = UserSerializer()
+
     class Meta:
         model = BugReport
         fields = ['id', 'project', 'reporter', 'heading', 'description',
