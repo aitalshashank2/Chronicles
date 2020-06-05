@@ -37,6 +37,7 @@ CORS_ORIGIN_WHITELIST = (
 
 INSTALLED_APPS = [
     'corsheaders',
+    'channels',
     'chronicles_backend.apps.ChroniclesBackendConfig',
     'rest_framework',
     'django.contrib.admin',
@@ -138,3 +139,14 @@ AUTH_USER_MODEL = 'chronicles_backend.ChronicleUser'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 MEDIA_URL = '/media/'
+
+# Websocket setup
+ASGI_APPLICATION = 'chronicles.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        }
+    }
+}
