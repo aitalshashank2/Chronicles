@@ -23,7 +23,7 @@ class BugReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = BugReport
         fields = ['id', 'project', 'reporter', 'heading', 'description',
-                  'person_in_charge', 'creation', 'status', 'tagsHash', 'image']
+                  'person_in_charge', 'creation', 'status', 'tagsHash']
         read_only_fields = ['reporter', 'creation', 'status', 'person_in_charge']
 
 
@@ -34,21 +34,21 @@ class BugReportEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = BugReport
         fields = ['id', 'project', 'reporter', 'heading', 'description',
-                  'person_in_charge', 'creation', 'status', 'tagsHash', 'image']
-        read_only_fields = ['reporter', 'creation', 'project', 'heading', 'description', 'tagsHash', 'image']
+                  'person_in_charge', 'creation', 'status', 'tagsHash']
+        read_only_fields = ['reporter', 'creation', 'project', 'heading', 'description', 'tagsHash']
 
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['id', 'report', 'creation', 'commenter', 'body', 'image']
-        read_only_fields = ['commenter', 'creation', 'image']
+        fields = ['id', 'report', 'creation', 'commenter', 'body']
+        read_only_fields = ['commenter', 'creation']
 
 
 class CommentEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['id', 'report', 'creation', 'commenter', 'body', 'image']
+        fields = ['id', 'report', 'creation', 'commenter', 'body']
         read_only_fields = ['commenter', 'creation', 'report']
 
 

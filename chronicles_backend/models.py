@@ -13,7 +13,7 @@ class ChronicleUser(AbstractUser):
 
 class Project(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=1000)
+    description = models.CharField(max_length=10000)
     creator = models.ForeignKey(ChronicleUser, null=True, on_delete=models.SET_NULL, related_name='created_projects')
     team = models.ManyToManyField(ChronicleUser, related_name='projects')
     creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of project creation')
@@ -34,7 +34,6 @@ class BugReport(models.Model):
     creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of bug report')
     status = models.BooleanField(default=False)
     tagsHash = models.IntegerField(default=0)
-    image = models.ImageField(upload_to='bugReportImages/', null=True)
 
     class Meta:
         ordering = ['status', 'creation']
@@ -48,7 +47,6 @@ class Comment(models.Model):
     creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of comment')
     commenter = models.ForeignKey(ChronicleUser, null=True, on_delete=models.SET_NULL)
     body = models.CharField(max_length=1000)
-    image = models.ImageField(upload_to='commentImages/', null=True)
 
     class Meta:
         ordering = ['-creation']
