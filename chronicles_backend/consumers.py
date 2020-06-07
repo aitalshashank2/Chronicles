@@ -4,6 +4,7 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import WebsocketConsumer
 from channels.auth import get_user
 from .models import BugReport, Comment
+from .serializers import CommentSerializer
 
 
 class CommentConsumer(WebsocketConsumer):
@@ -34,18 +35,20 @@ class CommentConsumer(WebsocketConsumer):
 
     def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-
-        async_to_sync(self.channel_layer.group_send)(
-            self.bug_id,
-            {
-                'type': 'send_comment',
-                'message': message
-            }
-        )
+        comment_id = text_data_json['comment_id']
+        try:
+            comment = Comment.objects.get(pk=comment_id)
+            comment_serializer = CommentSerializer(comment)
+            async_to_sync(self.channel_layer.group_send)(
+                self.bug_id,
+                {
+                    'type': 'send_comment',
+                    'comment': comment_serializer.data,
+                }
+            )
+        except Comment.DoesNotExist:
+            pass
 
     def send_comment(self, event):
-        message = event['message']
-        self.send(text_data=json.dumps({
-            'message': message
-        }))
+        comment = event['comment']
+        self.send(text_data=json.dumps(comment))

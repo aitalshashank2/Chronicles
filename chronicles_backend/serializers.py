@@ -52,6 +52,11 @@ class CommentEditSerializer(serializers.ModelSerializer):
         read_only_fields = ['commenter', 'creation', 'report']
 
 
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = ['id', 'randIdentifier', 'url']
+
 # Tags legend:
 # 0 :Functionality
 # 1 :Usability

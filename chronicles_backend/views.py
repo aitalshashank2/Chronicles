@@ -153,3 +153,27 @@ class CommentsOnBugs(APIView):
     def get(self, request, pk, format=None):
         serializer = CommentSerializer(BugReport.objects.get(pk=pk).comment_set.all(), many=True)
         return Response(serializer.data)
+
+
+class ImageViewSet(viewsets.ModelViewSet):
+    queryset = Image.objects.all()
+    serializer_class = ImageSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    @action(methods=['POST'], detail=False, url_path='deleteRem', url_name='deleteRem')
+    def delete_remaining_images(self, request):
+        if request.user.is_authenticated:
+            # try:
+            randIdentifier = request.POST.get('randIdentifier')
+            urls = request.POST.get('urls')
+
+            query_set = Image.objects.filter(randIdentifier=randIdentifier)
+            for i in query_set:
+                if i.url.url not in urls:
+                    i.delete()
+
+            return JsonResponse({'status': 'successful'})
+            # except:
+            #     return HttpResponseBadRequest()
+        else:
+            return HttpResponseForbidden()

@@ -55,3 +55,8 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.report.project}::{self.report}::{self.body}"
+
+
+class Image(models.Model):
+    randIdentifier = models.CharField(max_length=100)
+    url = models.ImageField(upload_to='imageWarehouse/')

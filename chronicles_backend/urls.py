@@ -8,6 +8,7 @@ router.register(r'users', UserViewSet)
 router.register(r'projects', ProjectViewSet)
 router.register(r'bugReports', BugReportViewSet)
 router.register(r'comments', CommentViewSet)
+router.register(r'images', ImageViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
