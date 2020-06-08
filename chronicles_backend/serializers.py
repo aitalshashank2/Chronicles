@@ -52,6 +52,15 @@ class CommentEditSerializer(serializers.ModelSerializer):
         read_only_fields = ['commenter', 'creation', 'report']
 
 
+class CommentVerboseSerializer(serializers.ModelSerializer):
+    commenter = UserSerializer()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'report', 'creation', 'commenter', 'body']
+        read_only_fields = ['commenter', 'creation']
+
+
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image

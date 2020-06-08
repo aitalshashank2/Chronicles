@@ -151,7 +151,7 @@ class BugsOfProject(APIView):
 class CommentsOnBugs(APIView):
 
     def get(self, request, pk, format=None):
-        serializer = CommentSerializer(BugReport.objects.get(pk=pk).comment_set.all(), many=True)
+        serializer = CommentVerboseSerializer(BugReport.objects.get(pk=pk).comment_set.all(), many=True)
         return Response(serializer.data)
 
 

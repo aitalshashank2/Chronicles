@@ -4,7 +4,7 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import WebsocketConsumer
 from channels.auth import get_user
 from .models import BugReport, Comment
-from .serializers import CommentSerializer
+from .serializers import CommentVerboseSerializer
 
 
 class CommentConsumer(WebsocketConsumer):
@@ -38,7 +38,7 @@ class CommentConsumer(WebsocketConsumer):
         comment_id = text_data_json['comment_id']
         try:
             comment = Comment.objects.get(pk=comment_id)
-            comment_serializer = CommentSerializer(comment)
+            comment_serializer = CommentVerboseSerializer(comment)
             async_to_sync(self.channel_layer.group_send)(
                 self.bug_id,
                 {

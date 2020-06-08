@@ -28,7 +28,7 @@ class BugReport(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     reporter = models.ForeignKey(ChronicleUser, null=True, on_delete=models.SET_NULL, related_name='reported_bugs')
     heading = models.CharField(max_length=500)
-    description = models.CharField(max_length=2000)
+    description = models.CharField(max_length=20000)
     person_in_charge = models.ForeignKey(ChronicleUser, null=True, on_delete=models.SET_NULL,
                                          related_name='bugs_assigned')
     creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of bug report')
@@ -49,7 +49,7 @@ class Comment(models.Model):
     body = models.CharField(max_length=1000)
 
     class Meta:
-        ordering = ['-creation']
+        ordering = ['creation']
 
     def __str__(self):
         return f"{self.report.project}::{self.report}::{self.body}"
