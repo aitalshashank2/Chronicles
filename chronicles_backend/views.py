@@ -17,7 +17,9 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     @action(methods=['GET'], detail=False, url_path='curr', url_name='curr')
     def curr_user(self, request):
         if request.user.is_authenticated:
-            return JsonResponse({'user': request.user.username})
+            user = request.user
+            serializer = UserSerializer(user)
+            return JsonResponse(serializer.data)
         else:
             return HttpResponseForbidden()
 
@@ -92,8 +94,10 @@ class BugReportViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return BugReportSerializer
-        else:
+        elif self.request.method == 'PATCH' or self.request.method == 'PUT':
             return BugReportEditSerializer
+        else:
+            return BugReportVerboseSerializer
 
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
@@ -136,15 +140,15 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 class MembersOfProject(APIView):
 
-    def get(self, request, slug, format=None):
-        serializer = UserSerializer(Project.objects.get(slug=slug).team.all(), many=True)
+    def get(self, request, pk, format=None):
+        serializer = UserSerializer(Project.objects.get(pk=pk).team.all(), many=True)
         return Response(serializer.data)
 
 
 class BugsOfProject(APIView):
 
-    def get(self, request, slug, format=None):
-        serializer = BugReportSerializer(Project.objects.get(slug=slug).bugreport_set.all(), many=True)
+    def get(self, request, pk, format=None):
+        serializer = BugReportSerializer(Project.objects.get(pk=pk).bugreport_set.all(), many=True)
         return Response(serializer.data)
 
 
