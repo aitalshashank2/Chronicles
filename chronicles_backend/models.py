@@ -6,6 +6,10 @@ from datetime import datetime
 class ChronicleUser(AbstractUser):
     enrNo = models.IntegerField(default=0)
     isAdmin = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['enrNo']
 
     def __str__(self):
         return self.get_username()

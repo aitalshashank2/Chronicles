@@ -5,7 +5,7 @@ from chronicles_backend.models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChronicleUser
-        fields = ['id', 'username', 'first_name', 'last_name', 'isAdmin']
+        fields = ['id', 'username', 'first_name', 'last_name', 'isAdmin', 'is_active']
 
 
 class ProjectSerializer(serializers.ModelSerializer):

@@ -10,16 +10,21 @@ from .permissions import *
 from .serializers import *
 
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     queryset = ChronicleUser.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAdmin]
 
     @action(methods=['GET'], detail=False, url_path='curr', url_name='curr')
     def curr_user(self, request):
         if request.user.is_authenticated:
             user = request.user
-            serializer = UserSerializer(user)
-            return JsonResponse(serializer.data)
+            if user.is_active:
+                serializer = UserSerializer(user)
+                return JsonResponse(serializer.data)
+            else:
+                return HttpResponseForbidden()
+
         else:
             return HttpResponseForbidden()
 
@@ -62,7 +67,10 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         if maintainer:
             try:
                 user = ChronicleUser.objects.get(enrNo=resdict2['student']['enrolmentNumber'])
-                login(request=request, user=user)
+                if user.is_active:
+                    login(request=request, user=user)
+                else:
+                    return HttpResponseForbidden()
             except ChronicleUser.DoesNotExist:
                 user = ChronicleUser(
                     username=resdict2['person']['fullName'],

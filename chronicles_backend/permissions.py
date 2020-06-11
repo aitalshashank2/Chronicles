@@ -24,3 +24,10 @@ class IsCommenter(permissions.BasePermission):
         if (request.method in permissions.SAFE_METHODS) or (request.method == 'POST'):
             return True
         return request.user == obj.commenter
+
+
+class IsAdmin(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if (request.method in permissions.SAFE_METHODS) or request.user.isAdmin:
+            return True
+        return False
