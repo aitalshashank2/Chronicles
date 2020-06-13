@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .permissions import *
 from .serializers import *
+from .mailingWizard import MailThread
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -89,7 +90,24 @@ class ProjectViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsProjectCreatorOrAdmin]
 
     def perform_create(self, serializer):
-        serializer.save(creator=self.request.user)
+        project = serializer.save(creator=self.request.user)
+        context = {
+            "action": "new_team_member",
+            "project": project,
+        }
+        MailThread(serializer.validated_data['team'], context).start()
+
+    def perform_update(self, serializer):
+        try:
+            new_users = [user for user in serializer.validated_data['team'] if user not in self.get_object().team.all()]
+            context = {
+                "action": "new_team_member",
+                "project": self.get_object(),
+            }
+            MailThread(new_users, context).start()
+        except KeyError:
+            pass
+        serializer.save()
 
 
 class BugReportViewSet(viewsets.ModelViewSet):
@@ -97,7 +115,36 @@ class BugReportViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsTeamMemberOrAdmin]
 
     def perform_create(self, serializer):
-        serializer.save(reporter=self.request.user)
+        bug_report = serializer.save(reporter=self.request.user)
+        context = {
+            "action": "bug_report_update",
+            "project": bug_report.project,
+            "bug_report": bug_report,
+        }
+        MailThread(bug_report.project.team.all(), context).start()
+
+    def perform_update(self, serializer):
+        try:
+            user = serializer.validated_data['person_in_charge']
+            status = serializer.validated_data['status']
+
+            if status:
+                context = {
+                    "action": "bug_resolved",
+                    "project": self.get_object().project,
+                    "bug_report": self.get_object(),
+                }
+                MailThread(self.get_object().project.team.all(), context).start()
+            else:
+                context = {
+                    "action": "bug_report_assignment",
+                    "project": self.get_object().project,
+                    "bug_report": self.get_object(),
+                }
+                MailThread([user], context).start()
+        except KeyError:
+            pass
+        serializer.save()
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
