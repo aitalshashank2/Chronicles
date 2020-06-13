@@ -38,6 +38,7 @@ class BugReportEditSerializer(serializers.ModelSerializer):
 class BugReportVerboseSerializer(serializers.ModelSerializer):
     reporter = UserSerializer()
     person_in_charge = UserSerializer()
+    project = ProjectSerializer()
 
     class Meta:
         model = BugReport

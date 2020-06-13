@@ -16,6 +16,22 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAdmin]
 
+    @action(methods=['GET'], detail=False, url_path='projects', url_name='projects')
+    def user_projects(self, request):
+        if request.user.is_authenticated and request.user.is_active:
+            serializer = ProjectSerializer(request.user.projects.all(), many=True)
+            return Response(serializer.data)
+        else:
+            return HttpResponseForbidden()
+
+    @action(methods=['GET'], detail=False, url_path='bugReports', url_name='bugReports')
+    def user_bug_reports(self, request):
+        if request.user.is_authenticated and request.user.is_active:
+            serializer = BugReportVerboseSerializer(request.user.bugs_assigned.all(), many=True)
+            return Response(serializer.data)
+        else:
+            return HttpResponseForbidden()
+
     @action(methods=['GET'], detail=False, url_path='curr', url_name='curr')
     def curr_user(self, request):
         if request.user.is_authenticated:
