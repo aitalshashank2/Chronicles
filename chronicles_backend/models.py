@@ -21,7 +21,7 @@ class Project(models.Model):
     creator = models.ForeignKey(ChronicleUser, null=True, on_delete=models.SET_NULL, related_name='created_projects')
     team = models.ManyToManyField(ChronicleUser, related_name='projects')
     creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of project creation')
-    image = models.ImageField(upload_to='projectImages/', default='projectImages/default.png')
+    image = models.ImageField(upload_to='projectImages/', default='defaults/ProjectLogo.png')
     slug = models.CharField(max_length=100, unique=True)
 
     def __str__(self):

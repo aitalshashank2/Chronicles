@@ -1,4 +1,5 @@
 venv/
-media/
+media/projectImages/
+media/imageWarehouse/
 .idea/
 __pycache__
