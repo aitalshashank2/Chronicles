@@ -2,9 +2,10 @@ import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import threading
+from decouple import config
 
-sender_email = "xxx"
-password = "xxx"
+sender_email = config('SENDER_EMAIL')
+password = config("SENDER_PASSWORD")
 
 
 def sendmail(receiver, message):

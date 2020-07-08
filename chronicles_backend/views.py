@@ -1,5 +1,6 @@
 import json
 import requests
+from decouple import config
 from django.contrib.auth import login, logout
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from rest_framework import viewsets
@@ -61,8 +62,8 @@ class UserViewSet(viewsets.ModelViewSet):
         except:
             return HttpResponseBadRequest()
         payload = {
-            'client_id': 'nUeXTqAt8eJEwfmgZ9vIRSTyexUldebZO8Ht43H0',
-            'client_secret': 'xxx',
+            'client_id': config('CLIENT_ID'),
+            'client_secret': config('CLIENT_SECRET'),
             'grant_type': 'authorization_code',
             'redirect_url': 'http://localhost:3000',
             'code': auth_code,

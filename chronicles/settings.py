@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,12 +21,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '%l05x&c$mqf(8b%b!e&=5c_ia^bse3-k!d$jr7mm_e9^x8!t2_'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = int(config('DEBUG'))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -90,7 +92,7 @@ DATABASES = {
         'PORT': '3306',
         'NAME': 'Chronicles',
         'USER': 'root',
-        'PASSWORD': 'Pass123#',
+        'PASSWORD': config('MYSQL_PASSWORD'),
         'OPTIONS': {'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"'},
     }
 }
