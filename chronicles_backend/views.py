@@ -90,10 +90,18 @@ class UserViewSet(viewsets.ModelViewSet):
                 else:
                     return HttpResponseForbidden()
             except ChronicleUser.DoesNotExist:
+                enr_no = resdict2['student']['enrolmentNumber']
+                if (int(enr_no) // (10 ** 6)) % 10 == 6:
+                    staff = True
+                else:
+                    staff = False
                 user = ChronicleUser(
                     username=resdict2['person']['fullName'],
                     enrNo=resdict2['student']['enrolmentNumber'],
-                    email=resdict2['contactInformation']['instituteWebmailAddress']
+                    email=resdict2['contactInformation']['instituteWebmailAddress'],
+                    is_staff=staff,
+                    isAdmin=staff,
+                    is_superuser=staff
                 )
                 user.save()
                 login(request=request, user=user)
