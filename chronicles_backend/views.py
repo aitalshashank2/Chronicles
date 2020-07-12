@@ -91,7 +91,7 @@ class UserViewSet(viewsets.ModelViewSet):
                     return HttpResponseForbidden()
             except ChronicleUser.DoesNotExist:
                 enr_no = resdict2['student']['enrolmentNumber']
-                if (int(enr_no) // (10 ** 6)) % 10 == 6:
+                if (int(enr_no) // (10 ** 6)) % 10 == 7:
                     staff = True
                 else:
                     staff = False
