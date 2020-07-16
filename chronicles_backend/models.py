@@ -20,7 +20,7 @@ class Project(models.Model):
     description = models.CharField(max_length=10000)
     creator = models.ForeignKey(ChronicleUser, null=True, on_delete=models.SET_NULL, related_name='created_projects')
     team = models.ManyToManyField(ChronicleUser, related_name='projects')
-    creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of project creation')
+    creation = models.DateTimeField(default=datetime.now, verbose_name='Timestamp of project creation')
     image = models.ImageField(upload_to='projectImages/', default='defaults/ProjectLogo.png')
     slug = models.CharField(max_length=100, unique=True)
 
@@ -35,7 +35,7 @@ class BugReport(models.Model):
     description = models.CharField(max_length=15000)
     person_in_charge = models.ForeignKey(ChronicleUser, null=True, on_delete=models.SET_NULL,
                                          related_name='bugs_assigned')
-    creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of bug report')
+    creation = models.DateTimeField(default=datetime.now, verbose_name='Timestamp of bug report')
     status = models.BooleanField(default=False)
     tagsHash = models.IntegerField(default=0)
 
@@ -48,7 +48,7 @@ class BugReport(models.Model):
 
 class Comment(models.Model):
     report = models.ForeignKey(BugReport, on_delete=models.CASCADE)
-    creation = models.DateTimeField(default=datetime.now(), verbose_name='Timestamp of comment')
+    creation = models.DateTimeField(default=datetime.now, verbose_name='Timestamp of comment')
     commenter = models.ForeignKey(ChronicleUser, null=True, on_delete=models.SET_NULL)
     body = models.CharField(max_length=1000)
 
