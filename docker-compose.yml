@@ -1,0 +1,22 @@
+version: '3'
+
+services: 
+    db:
+        image: mysql/mysql-server:latest
+        ports: 
+            - '3306:3306'
+        environment: 
+            MYSQL_DATABASE: 'Chronicles'
+            MYSQL_USER: 'root'
+            MYSQL_PASSWORD: 'Pass123#'
+            MYSQL_ROOT_PASSWORD: 'Pass123#'
+    
+    web:
+        build: .
+        command: python manage.py runserver
+        volumes:
+            - .:/chronicles
+        ports:
+            - "8000:8000"
+        depends_on: 
+            - db
