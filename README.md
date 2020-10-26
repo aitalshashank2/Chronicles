@@ -30,3 +30,6 @@ IMG Summer Project
   ```
   daphne -p 8000 chronicles.asgi:application
   ```
+---
+
+- Participate in Hacktober2020
