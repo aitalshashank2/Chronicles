@@ -1,6 +1,7 @@
-venv/
+.env/
 media/projectImages/
 media/imageWarehouse/
 .idea/
 __pycache__
 .env
+.vscode/

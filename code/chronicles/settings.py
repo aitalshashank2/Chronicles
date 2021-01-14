@@ -11,7 +11,12 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from decouple import config
+import io
+import yaml
+
+# Import environment variables
+with io.open('configuration/config.yml', 'r') as stream:
+    CONFIG_VARS = yaml.safe_load(stream)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,18 +26,18 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = CONFIG_VARS['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-DEBUG = int(config('DEBUG'))
+DEBUG = CONFIG_VARS['DEBUG']
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = CONFIG_VARS['ALLOWED_HOSTS']
 
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
+    CONFIG_VARS['CHANNELI']['REDIRECT_URI'],
 )
 
 # Application definition
@@ -87,13 +92,12 @@ WSGI_APPLICATION = 'chronicles.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'NAME': 'Chronicles',
-        'USER': 'root',
-        'PASSWORD': config('MYSQL_PASSWORD'),
-        'OPTIONS': {'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"'},
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'HOST': CONFIG_VARS['DATABASE']['HOST'],
+        'PORT': CONFIG_VARS['DATABASE']['PORT'],
+        'NAME': CONFIG_VARS['DATABASE']['NAME'],
+        'USER': CONFIG_VARS['DATABASE']['USER'],
+        'PASSWORD': CONFIG_VARS['DATABASE']['PASSWORD'],
     }
 }
 
@@ -134,12 +138,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+STATIC_ROOT = '../static/'
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'chronicles_backend.ChronicleUser'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-
+MEDIA_ROOT = '../media/'
 MEDIA_URL = '/media/'
 
 # Websocket setup
@@ -148,7 +152,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [(CONFIG_VARS['CHANNEL_LAYER']['HOST'], CONFIG_VARS['CHANNEL_LAYER']['PORT'])],
         }
     }
 }

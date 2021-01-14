@@ -1,11 +1,17 @@
+from chronicles.settings import CONFIG_VARS
 import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import threading
-from decouple import config
 
-sender_email = config('SENDER_EMAIL')
-password = config("SENDER_PASSWORD")
+import io
+import yaml
+
+with io.open('configuration/config.yml', 'r') as stream:
+    CONFIG_VARS = yaml.safe_load(stream)
+
+sender_email = CONFIG_VARS['EMAIL']['ADDRESS']
+password = CONFIG_VARS['EMAIL']['PASSWORD']
 
 
 def sendmail(receiver, message):
@@ -31,7 +37,7 @@ def message_generator(mail_data):
 
 def personify(user_list, context):
 
-    frontend_url = "http://localhost:3000/"
+    frontend_url = CONFIG_VARS['FRONTEND']
     subject = ""
     text = ""
     html = ""

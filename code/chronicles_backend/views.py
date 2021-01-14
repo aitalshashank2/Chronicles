@@ -1,6 +1,6 @@
+from chronicles.settings import CONFIG_VARS
 import json
 import requests
-from decouple import config
 from django.contrib.auth import login, logout
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from rest_framework import viewsets
@@ -62,10 +62,10 @@ class UserViewSet(viewsets.ModelViewSet):
         except:
             return HttpResponseBadRequest()
         payload = {
-            'client_id': config('CLIENT_ID'),
-            'client_secret': config('CLIENT_SECRET'),
+            'client_id': CONFIG_VARS['CHANNELI']['CLIENT_ID'],
+            'client_secret': CONFIG_VARS['CHANNELI']['CLIENT_SECRET'],
             'grant_type': 'authorization_code',
-            'redirect_url': 'http://localhost:3000',
+            'redirect_url': CONFIG_VARS['CHANNELI']['REDIRECT_URI'],
             'code': auth_code,
         }
         response = requests.post('https://internet.channeli.in/open_auth/token/', data=payload)
