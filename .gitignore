@@ -5,3 +5,4 @@ media/imageWarehouse/
 __pycache__
 .env
 .vscode/
+static/

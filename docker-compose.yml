@@ -1,22 +1,73 @@
-version: '3'
+version: '3.8'
 
 services: 
     db:
-        image: mysql/mysql-server:latest
-        ports: 
-            - '3306:3306'
-        environment: 
-            MYSQL_DATABASE: 'Chronicles'
-            MYSQL_USER: 'root'
-            MYSQL_PASSWORD: 'Pass123#'
-            MYSQL_ROOT_PASSWORD: 'Pass123#'
+        restart: always
+        build: ./postgres
+        container_name: chronicles_postgres
+        env_file: 
+            - postgres/database.env
+        expose:
+            - 5432
+        volumes:
+            - database:/var/lib/postgresql/data/
+        networks: 
+            - chronicles_network
+
+    redis:
+        restart: always
+        build: ./redis
+        container_name: chronicles_redis
+        expose:
+            - 6379
+        networks: 
+            - chronicles_network
     
     web:
-        build: .
-        command: python manage.py runserver
-        volumes:
-            - .:/chronicles
-        ports:
-            - "8000:8000"
+        restart: always
+        build: 
+            context: ./code
+        container_name: chronicles_web
+        command: sh -c "python manage.py collectstatic --no-input && python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+        volumes: 
+            - ./code/:/code/
+            - ./static/:/static/
+            - ./media/:/media/
+        expose:
+            - 8000
         depends_on: 
             - db
+            - redis
+        networks: 
+            - chronicles_network
+
+    frontend:
+        container_name: chronicles_frontend
+        build: ./frontend
+        volumes:
+            - frontend_build:/frontend/build/
+        networks:
+            - chronicles_network
+
+    nginx:
+        build: ./nginx
+        container_name: chronicles_nginx
+        ports:
+            - "54330:80"
+        volumes: 
+            - ./static/:/static/
+            - ./media/:/media/
+            - ./nginx/configuration/:/etc/nginx/conf.d/
+            - frontend_build:/var/www/frontend/
+        depends_on: 
+            - web
+            - frontend
+        networks: 
+            - chronicles_network
+
+volumes: 
+    database:
+    frontend_build:
+
+networks: 
+    chronicles_network:

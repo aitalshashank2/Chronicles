@@ -20,6 +20,6 @@ from django.conf.urls.static import static
 from chronicles import settings
 
 urlpatterns = [
-    path('', include('chronicles_backend.urls')),
+    path('api/', include('chronicles_backend.urls')),
     path('admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

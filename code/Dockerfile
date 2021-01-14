@@ -1,18 +1,18 @@
-FROM python:3.8-alpine
+FROM python:3.8.5-alpine
+
+LABEL maintainer="Shashank Aital"
+
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir /Chronicles
-WORKDIR /Chronicles
+RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev libffi-dev openssl-dev jpeg-dev zlib-dev libjpeg
 
-COPY . .
+RUN mkdir /code
 
-RUN apk add --no-cache --virtual .build-deps \
-    ca-certificates gcc mariadb-dev linux-headers musl-dev \
-    libffi-dev jpeg-dev zlib-dev
+WORKDIR /code
 
+COPY requirements.txt /code/
+
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-EXPOSE 8000
-EXPOSE 3306
-
-CMD ["python", "manage.py", "runserver"]
+COPY . .
